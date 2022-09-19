@@ -6,6 +6,7 @@
 @import url(./blocks/header/__email/header__email.css);
 @import url(./blocks/header/__button/header__button.css);
 @import url(./blocks/header/__user/header__user.css);
+@import url(./blocks/header/__button/_auth/header__button_auth.css);
 
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__avatar/profile__avatar.css);
@@ -52,7 +53,6 @@
 @import url(./blocks/modal/__content/_type_tooltip/modal__content_type_tooltip.css);
 
 @import url(./blocks/App/App.css);
-@import url(./blocks/header/__text/header__text.css);
 @import url(./blocks/auth/auth.css);
 @import url(./blocks/auth/__form/auth__form.css);
 @import url(./blocks/auth/__form/__form_title/auth__form_title.css);

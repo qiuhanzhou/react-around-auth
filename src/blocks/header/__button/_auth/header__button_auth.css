@@ -1,4 +1,4 @@
-.header__text {
+.header__button_auth {
   height: 22px;
   font-family: 'Inter';
   font-style: normal;
@@ -6,4 +6,8 @@
   font-size: 18px;
   line-height: 22px;
   text-align: right;
+  color: #ffffff;
+  background-color: black;
+  border: none;
+  cursor: pointer;
 }

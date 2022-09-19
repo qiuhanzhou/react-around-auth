@@ -208,7 +208,7 @@ function App() {
           </Route>
           <ProtectedRoute path='/' loggedIn={loggedIn}>
             <div className='page'>
-              <Header email={email} text='Log Out' loggedIn={loggedIn} />
+              <Header email={email} buttonText='Log Out' loggedIn={loggedIn} />
               <Main
                 onEditProfileClick={handleEditProfileClick}
                 onAddPlaceClick={handleAddPlaceClick}

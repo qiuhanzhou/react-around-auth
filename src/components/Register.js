@@ -70,10 +70,19 @@ function Register({}) {
       setIsInfoTooltipOpen(false)
     }
   }
+  function handleOnClick() {
+    console.log('ran')
+    history.push('/signin')
+  }
 
   return (
     <div className='auth'>
-      <Header email='' text='Sign up' />
+      <Header
+        email=''
+        buttonText='Log in'
+        loggedIn={false}
+        onClick={handleOnClick}
+      />
       <form onSubmit={handleSubmit} className='auth__form'>
         <h2 className='auth__form_title'>Sign up</h2>
         <input

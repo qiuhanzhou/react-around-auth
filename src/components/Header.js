@@ -1,7 +1,7 @@
 import logo from '../images/logo.svg'
 import { useHistory } from 'react-router-dom'
 
-export default function Header({ email, text, loggedIn }) {
+export default function Header({ email, buttonText, loggedIn, onClick }) {
   let history = useHistory()
 
   function onSignOut() {
@@ -17,12 +17,16 @@ export default function Header({ email, text, loggedIn }) {
         <div className='header__email '>{email}</div>
 
         {loggedIn && (
-          <button className='header__button' type='submit' onClick={onSignOut}>
-            {text}
+          <button className='header__button' onClick={onSignOut}>
+            {buttonText}
           </button>
         )}
 
-        {!loggedIn && <div className='header__text'>{text}</div>}
+        {!loggedIn && (
+          <button className='header__button_auth' onClick={onClick}>
+            {buttonText}
+          </button>
+        )}
       </div>
     </header>
   )

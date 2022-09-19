@@ -56,9 +56,18 @@ function Login({ handleLogin }) {
     onLogin()
   }
 
+  function handleOnClick(e) {
+    history.push('/signup')
+  }
+
   return (
     <div className='auth'>
-      <Header email='' text='Log in' />
+      <Header
+        email=''
+        buttonText='Sign up'
+        loggedIn={false}
+        onClick={handleOnClick}
+      />
       <form autoComplete='off' onSubmit={handleSubmit} className='auth__form'>
         <h2 className='auth__form_title'>Log in</h2>
         <input
