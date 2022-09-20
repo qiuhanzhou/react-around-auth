@@ -1,80 +1,41 @@
-import { useState } from 'react'
 import { Link, withRouter, useHistory } from 'react-router-dom'
-import * as auth from '../utils/auth'
 import Header from './Header'
-import InfoTooltip from './InfoTooltip'
-import successIcon from '../images/success.svg'
-import failIcon from '../images/fail.svg'
 
-function Register({}) {
-  const [signinCredentials, setSigninCredentials] = useState({
+import useForm from '../utils/useForm'
+
+function Register({ handleOnRegisterSubmit }) {
+  // const [signinCredentials, setSigninCredentials] = useState({
+  //   email: '',
+  //   password: '',
+  // })
+
+  // const { email, password } = signinCredentials
+
+  const history = useHistory()
+
+  // function handleChange(e) {
+  //   const { name, value } = e.target
+  //   console.log(name, value)
+  //   setSigninCredentials({ ...signinCredentials, [name]: value })
+  // }
+
+  const { values, handleChange } = useForm({
     email: '',
     password: '',
   })
-  const [message, setMessage] = useState('')
-  const [iconSrc, setIconSrc] = useState('')
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false)
+  const { email, password } = values
 
-  const { email, password } = signinCredentials
-
-  let history = useHistory()
-
-  function handleChange(e) {
-    const { name, value } = e.target
-    console.log(name, value)
-    setSigninCredentials({ ...signinCredentials, [name]: value })
-  }
-
-  function showFailedModal() {
-    setMessage('Oops, something went wrong! Please try again.')
-    setIconSrc(failIcon)
-    setIsInfoTooltipOpen(true)
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (email && password) {
-      auth
-        .register(password, email)
-        .then((res) => {
-          console.log(res)
-          if (res.data) {
-            //show modal with success message
-            setIsInfoTooltipOpen(true)
-            setMessage('Success! You have now been registered.')
-            setIconSrc(successIcon)
-            // history.push('/login')
-          } else {
-            //show modal with failure message
-            showFailedModal()
-          }
-        })
-        .catch((err) => {
-          showFailedModal()
-          if (err.statusCode === 400) {
-            console.log('one of the fields was filled in incorrectly')
-          } else {
-            console.log(err)
-          }
-        })
-    }
-  }
-
-  function handleClose(e) {
-    if (
-      (e.type === 'click' &&
-        (e.target.classList.contains('modal__close-button') ||
-          e.target.classList.contains('modal_open'))) ||
-      (e.type === 'keydown' && e.key === 'Escape')
-    ) {
-      setIsInfoTooltipOpen(false)
-    }
-  }
   function handleOnClick() {
     console.log('ran')
     history.push('/signin')
   }
 
+  function handleSubmit(e) {
+    e.preventDefault()
+    if (email && password) {
+      handleOnRegisterSubmit(password, email)
+    }
+  }
   return (
     <div className='auth'>
       <Header
@@ -120,12 +81,6 @@ function Register({}) {
           </Link>
         </p>
       </div>
-      <InfoTooltip
-        isOpen={isInfoTooltipOpen}
-        onClose={handleClose}
-        message={message}
-        iconSrc={iconSrc}
-      />
     </div>
   )
 }

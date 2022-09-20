@@ -1,7 +1,12 @@
 import { useRef } from 'react'
 import PopupWithForm from './PopupWithForm'
 
-export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+export default function EditAvatarPopup({
+  isOpen,
+  onClose,
+  onUpdateAvatar,
+  isLoading,
+}) {
   const inputRef = useRef()
 
   function handleSubmit(e) {
@@ -18,7 +23,7 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
       title='Update profile picture'
       isOpen={isOpen}
       onClose={onClose}
-      buttonText='Save'
+      buttonText={isLoading ? 'Saving...' : 'Save'}
       onSubmit={handleSubmit}
     >
       <label className='modal__form-field'>
