@@ -1,1 +1,1 @@
-Github page: [https://qiuhanzhou.github.io/around-react/]
+Github page: [https://qiuhanzhou.github.io/react-around-auth/]
