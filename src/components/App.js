@@ -4,6 +4,7 @@ import Main from './Main'
 import Footer from './Footer'
 import ImagePopup from './ImagePopup'
 import InfoTooltip from './InfoTooltip'
+
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
