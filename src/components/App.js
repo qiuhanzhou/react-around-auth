@@ -3,6 +3,7 @@ import Header from './Header'
 import Main from './Main'
 import Footer from './Footer'
 import ImagePopup from './ImagePopup'
+import InfoTooltip from './InfoTooltip'
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
@@ -13,9 +14,11 @@ import Login from './Login'
 import Register from './Register'
 import ProtectedRoute from './ProtectedRoute'
 import * as auth from '../utils/auth'
+import successIcon from '../images/success.svg'
+import failIcon from '../images/fail.svg'
 
 function App() {
-  let history = useHistory()
+  const history = useHistory()
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
@@ -26,6 +29,10 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({})
   const [loggedIn, setLoggedIn] = useState(false)
   const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [iconSrc, setIconSrc] = useState('')
 
   useEffect(() => {
     api
@@ -106,6 +113,7 @@ function App() {
     setIsAddPlacePopupOpen(false)
     setIsEditAvatarPopupOpen(false)
     setIsImagePopupOpen(false)
+    setIsInfoTooltipOpen(false)
     setSelectedCard({})
   }
 
@@ -126,6 +134,7 @@ function App() {
   }
 
   function handleUpdateUser(newUserInfo) {
+    setIsLoading(true)
     api
       .setUserInfo(newUserInfo)
       .then((newUserInfo) => {
@@ -136,9 +145,13 @@ function App() {
       .catch((err) => {
         console.log(`can't set user info: ${err}`)
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   function handleUpdateAvatar({ avatar }) {
+    setIsLoading(true)
     api
       .setUserAvatar({ avatar })
       .then(
@@ -152,9 +165,13 @@ function App() {
       .catch((err) => {
         console.log(`can't update user avatar: ${err}`)
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   function handleAddPlaceSubmit(newAddPlaceInfo) {
+    setIsLoading(true)
     // Send a request to the API and getting the updated card data
     api
       .addCard(newAddPlaceInfo)
@@ -168,32 +185,66 @@ function App() {
       .catch((err) => {
         console.log(`can't add card: ${err}`)
       })
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
   function handleTokenCheck() {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt')
       // we're checking the user's token
-      auth.checkToken(jwt).then((res) => {
-        console.log('checkToken: ', res)
-        setEmail(res.data.email)
-        if (res.data) {
-          setLoggedIn(true)
-          history.push('/')
-        }
-      })
+      auth
+        .checkToken(jwt)
+        .then((res) => {
+          console.log('checkToken: ', res)
+          setEmail(res.data.email)
+          if (res.data) {
+            setLoggedIn(true)
+            history.push('/')
+          }
+        })
+        .catch((err) => {
+          console.log('cannot check token')
+        })
     }
   }
 
   function onLogin(email) {
     // handleTokenCheck()
     setEmail(email)
-
     setLoggedIn(true)
   }
 
-  function onSignOut() {
-    setLoggedIn(false)
+  function showFailedModal() {
+    setMessage('Oops, something went wrong! Please try again.')
+    setIconSrc(failIcon)
+    setIsInfoTooltipOpen(true)
+  }
+  function handleRegisterSubmit(password, email) {
+    auth
+      .register(password, email)
+      .then((res) => {
+        console.log(res)
+        if (res.data) {
+          //show modal with success message
+          setIsInfoTooltipOpen(true)
+          setMessage('Success! You have now been registered.')
+          setIconSrc(successIcon)
+          // history.push('/login')
+        } else {
+          //show modal with failure message
+          showFailedModal()
+        }
+      })
+      .catch((err) => {
+        showFailedModal()
+        if (err.statusCode === 400) {
+          console.log('one of the fields was filled in incorrectly')
+        } else {
+          console.log(err)
+        }
+      })
   }
 
   return (
@@ -201,14 +252,25 @@ function App() {
       <div className='App'>
         <Switch>
           <Route path='/signup'>
-            <Register />
+            <Register
+              onClose={handleCloseAllPopups}
+              isInfoTooltipOpen={isInfoTooltipOpen}
+              setIsInfoTooltipOpen={setIsInfoTooltipOpen}
+              handleOnRegisterSubmit={handleRegisterSubmit}
+            />
+            <InfoTooltip
+              isOpen={isInfoTooltipOpen}
+              onClose={handleCloseAllPopups}
+              message={message}
+              iconSrc={iconSrc}
+            />
           </Route>
           <Route path='/signin'>
             <Login handleLogin={onLogin} />
           </Route>
           <ProtectedRoute path='/' loggedIn={loggedIn}>
             <div className='page'>
-              <Header email={email} text='Log Out' loggedIn={loggedIn} />
+              <Header email={email} buttonText='Log Out' loggedIn={loggedIn} />
               <Main
                 onEditProfileClick={handleEditProfileClick}
                 onAddPlaceClick={handleAddPlaceClick}
@@ -224,20 +286,20 @@ function App() {
                 isOpen={isEditProfilePopupOpen}
                 onClose={handleCloseAllPopups}
                 onUpdateUser={handleUpdateUser}
+                isLoading={isLoading}
               />
-
               <AddPlacePopup
                 isOpen={isAddPlacePopupOpen}
                 onClose={handleCloseAllPopups}
                 onAddPlaceSubmit={handleAddPlaceSubmit}
+                isLoading={isLoading}
               />
-
               <EditAvatarPopup
                 isOpen={isEditAvatarPopupOpen}
                 onClose={handleCloseAllPopups}
                 onUpdateAvatar={handleUpdateAvatar}
+                isLoading={isLoading}
               />
-
               <ImagePopup
                 isOpen={isImagePopupOpen}
                 onClose={handleCloseAllPopups}

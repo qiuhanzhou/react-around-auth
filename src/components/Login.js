@@ -3,22 +3,30 @@ import { useState } from 'react'
 import { Link, withRouter, useHistory } from 'react-router-dom'
 import * as auth from '../utils/auth'
 import Header from './Header'
+import useForm from '../utils/useForm'
 
 function Login({ handleLogin }) {
-  const [loginCredentials, setLoginCredentials] = useState({
+  // const [loginCredentials, setLoginCredentials] = useState({
+  //   email: '',
+  //   password: '',
+  // })
+
+  // const { email, password } = loginCredentials
+
+  const { values, handleChange, setValues } = useForm({
     email: '',
     password: '',
   })
+
+  const { email, password } = values
+
   const [error, setError] = useState(false)
+  const history = useHistory()
 
-  const { email, password } = loginCredentials
-
-  let history = useHistory()
-
-  function handleChange(e) {
-    const { name, value } = e.target
-    setLoginCredentials({ ...loginCredentials, [name]: value })
-  }
+  // function handleChange(e) {
+  // const {value, name} = e.target;
+  //   setLoginCredentials({ ...loginCredentials, [name]: value })
+  // }
 
   function onLogin() {
     auth
@@ -26,7 +34,7 @@ function Login({ handleLogin }) {
       .then((data) => {
         console.log(data)
         if (data.token) {
-          setLoginCredentials({ email: '', password: '' })
+          setValues({ email: '', password: '' })
           handleLogin(email)
           //wait 3s and then redirect
           setTimeout(() => {
@@ -43,7 +51,7 @@ function Login({ handleLogin }) {
         if (err.statusCode === 401) {
           console.log('401 - the user with the specified email not found')
         }
-        console.log(err)
+        console.log('cannot log in')
         setError(true)
       })
   }
@@ -56,9 +64,18 @@ function Login({ handleLogin }) {
     onLogin()
   }
 
+  function handleOnClick(e) {
+    history.push('/signup')
+  }
+
   return (
     <div className='auth'>
-      <Header email='' text='Log in' />
+      <Header
+        email=''
+        buttonText='Sign up'
+        loggedIn={false}
+        onClick={handleOnClick}
+      />
       <form autoComplete='off' onSubmit={handleSubmit} className='auth__form'>
         <h2 className='auth__form_title'>Log in</h2>
         <input

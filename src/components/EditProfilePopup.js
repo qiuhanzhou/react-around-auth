@@ -1,10 +1,11 @@
-import { useState, useEffect, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import PopupWithForm from './PopupWithForm'
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
+import useForm from '../utils/useForm'
 
 export default function EditProfilePopup(props) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
+  // const [name, setName] = useState('')
+  // const [description, setDescription] = useState('')
 
   // Subscription to the context
   const currentUser = useContext(CurrentUserContext)
@@ -12,18 +13,27 @@ export default function EditProfilePopup(props) {
   // After loading the current user from the API
   // their data will be used in managed components.
 
+  const { values, handleChange, setValues } = useForm({
+    name: '',
+    about: '',
+  })
+
   useEffect(() => {
-    setName(currentUser.name)
-    setDescription(currentUser.about)
+    setValues({
+      name: currentUser.name,
+      about: currentUser.about,
+    })
   }, [currentUser, props.isOpen])
 
-  function handleChange(e) {
-    if (e.target.name === 'name') {
-      setName(e.target.value)
-    } else {
-      setDescription(e.target.value)
-    }
-  }
+  // function handleChange(e) {
+  //   if (e.target.name === 'name') {
+  //     setName(e.target.value)
+  //   } else {
+  //     setDescription(e.target.value)
+  //   }
+  // }
+
+  const { name, about } = values
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -31,7 +41,7 @@ export default function EditProfilePopup(props) {
     // Pass the values of the managed components to the external handler
     props.onUpdateUser({
       name,
-      about: description,
+      about,
     })
   }
 
@@ -41,7 +51,7 @@ export default function EditProfilePopup(props) {
       onClose={props.onClose}
       title='Edit profile'
       name='edit'
-      buttonText='Save'
+      buttonText={props.isLoading ? 'Saving...' : 'Save'}
       onSubmit={handleSubmit}
     >
       <label className='modal__form-field'>
@@ -64,7 +74,7 @@ export default function EditProfilePopup(props) {
         <input
           name='about'
           type='text'
-          value={description || ''}
+          value={about || ''}
           onChange={handleChange}
           className='modal__input'
           id='about-input'

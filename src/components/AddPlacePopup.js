@@ -1,29 +1,31 @@
-import { useState, useEffect } from 'react'
-
 import PopupWithForm from './PopupWithForm'
+import useForm from '../utils/useForm'
 
 export default function AddPlacePopup(props) {
-  useEffect(() => {
-    setTitle('')
-    setLink('')
-  }, [props.isOpen])
+  // const [title, setTitle] = useState('')
+  // const [url, setLink] = useState('')
 
-  const [title, setTitle] = useState('')
-  const [link, setLink] = useState('')
+  const { values, handleChange } = useForm({
+    title: '',
+    url: '',
+  })
+
+  const { title, url } = values
 
   function handleSubmit(e) {
     e.preventDefault()
+    console.log('add card submit')
     // Pass the latest input value (controlled component) to the external handler
-    props.onAddPlaceSubmit({ name: title, link })
+    props.onAddPlaceSubmit({ name: title, link: url })
   }
 
-  function handleChange(e) {
-    if (e.target.name === 'title') {
-      setTitle(e.target.value)
-    } else {
-      setLink(e.target.value)
-    }
-  }
+  // function handleChange(e) {
+  //   if (e.target.name === 'title') {
+  //     setTitle(e.target.value)
+  //   } else {
+  //     setLink(e.target.value)
+  //   }
+  // }
 
   return (
     <PopupWithForm
@@ -31,7 +33,7 @@ export default function AddPlacePopup(props) {
       title='New Place'
       isOpen={props.isOpen}
       onClose={props.onClose}
-      buttonText='Create'
+      buttonText={props.isLoading ? 'Creating...' : 'Create'}
       onSubmit={handleSubmit}
     >
       <label className='modal__form-field'>
@@ -59,7 +61,7 @@ export default function AddPlacePopup(props) {
           id='url-input'
           required
           onChange={handleChange}
-          value={link}
+          value={url}
         />
         <span className='modal__error url-input-error'></span>
       </label>

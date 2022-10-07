@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import ImagePopup from './ImagePopup'
 
 export default function InfoTooltip(props) {
   const modalRef = useRef(null)

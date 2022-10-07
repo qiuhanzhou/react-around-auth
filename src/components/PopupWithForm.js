@@ -1,12 +1,13 @@
-import { useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 
 export default function PopupWithForm(props) {
+  const modalRef = useRef()
+
   useEffect(() => {
     if (props.isOpen) {
-      const modal = document.querySelector(`.modal_type_${props.name}`)
-      modal.focus()
+      modalRef.current.focus()
     }
-  }, [props.isOpen, props.name])
+  }, [props.isOpen])
   return (
     <div
       className={`modal modal_type_${props.name} ${
@@ -17,6 +18,7 @@ export default function PopupWithForm(props) {
       onClick={props.onClose}
       onKeyDown={props.onClose}
       tabIndex='0'
+      ref={modalRef}
     >
       <div className='modal__content'>
         <button
@@ -25,7 +27,12 @@ export default function PopupWithForm(props) {
           className='modal__close-button'
         ></button>
         <h2 className='modal__title'>{props.title}</h2>
-        <form className='modal__form' name={props.name} id={props.name}>
+        <form
+          className='modal__form'
+          name={props.name}
+          id={props.name}
+          onSubmit={props.onSubmit}
+        >
           {props.children}
           <button
             type='submit'
